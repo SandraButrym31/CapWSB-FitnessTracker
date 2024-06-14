@@ -28,7 +28,7 @@ public interface TrainingProvider {
 
     public List<Training> getTrainingsByActivity(ActivityType activityType);
 
-    public Training createTraining(TrainingRequest trainingRequest);
+    public Training createTraining(TrainingDtoId trainingDtoId);
 
     public Training updateTraining(Long trainingId, Training updatedTraining);
 

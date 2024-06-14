@@ -1,10 +1,12 @@
 package com.capgemini.wsb.fitnesstracker.training.internal;
 
 import com.capgemini.wsb.fitnesstracker.training.api.Training;
-import com.capgemini.wsb.fitnesstracker.training.api.TrainingRequest;
+import com.capgemini.wsb.fitnesstracker.training.api.TrainingDto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.capgemini.wsb.fitnesstracker.training.api.TrainingDtoId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,8 @@ public class TrainingController {
 
   @Autowired
   private TrainingServiceImpl trainingService;
+    @Autowired
+    private TrainingMapper trainingMapper;
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
@@ -51,8 +55,8 @@ public class TrainingController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Training createTraining(@RequestBody TrainingRequest trainingRequest) {
-    return trainingService.createTraining(trainingRequest);
+  public TrainingDto createTraining(@RequestBody TrainingDtoId trainingDtoId) {
+    return trainingMapper.toTraining(trainingService.createTraining(trainingDtoId));
   }
 
   @PutMapping("/{trainingId}")

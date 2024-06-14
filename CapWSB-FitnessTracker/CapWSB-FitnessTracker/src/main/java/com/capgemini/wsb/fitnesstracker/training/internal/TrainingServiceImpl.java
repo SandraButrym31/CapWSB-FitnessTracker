@@ -1,12 +1,10 @@
 package com.capgemini.wsb.fitnesstracker.training.internal;
 
-import com.capgemini.wsb.fitnesstracker.training.api.Training;
-import com.capgemini.wsb.fitnesstracker.training.api.TrainingNotFoundException;
-import com.capgemini.wsb.fitnesstracker.training.api.TrainingProvider;
-import com.capgemini.wsb.fitnesstracker.training.api.TrainingRequest;
+import com.capgemini.wsb.fitnesstracker.training.api.*;
 import com.capgemini.wsb.fitnesstracker.user.api.User;
 
 import com.capgemini.wsb.fitnesstracker.user.api.UserNotFoundException;
+import com.capgemini.wsb.fitnesstracker.user.api.UserProvider;
 import com.capgemini.wsb.fitnesstracker.user.internal.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +25,12 @@ public class TrainingServiceImpl implements TrainingProvider {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private final UserProvider userProvider;
+
+    @Autowired
+    private final TrainingMapper trainingMapper;
 
     @Override
     public Optional<User> getTraining(final Long trainingId) {
@@ -62,20 +66,12 @@ public class TrainingServiceImpl implements TrainingProvider {
     }
 
     @Override
-    public Training createTraining(TrainingRequest trainingRequest) {
-        User user = userRepository.findById(trainingRequest.userId())
-            .orElseThrow(() -> new UserNotFoundException(trainingRequest.userId()));
-
-        Training training = new Training(
-            user,
-            trainingRequest.startTime(),
-            trainingRequest.endTime(),
-            trainingRequest.activityType(),
-            trainingRequest.distance(),
-            trainingRequest.averageSpeed()
-        );
-
-        return trainingRepository.save(training);
+    public Training createTraining(TrainingDtoId trainingIdTO){
+        User user = userProvider.getUser(trainingIdTO.getUserId()).get();
+        Training training = trainingMapper.toEntity(trainingIdTO);
+        training.setUser(user);
+        trainingRepository.save(training);
+        return training;
     }
 
     @Override
