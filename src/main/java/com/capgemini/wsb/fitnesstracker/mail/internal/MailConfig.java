@@ -7,4 +7,5 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(MailProperties.class)
 class MailConfig {
 
+
 }
